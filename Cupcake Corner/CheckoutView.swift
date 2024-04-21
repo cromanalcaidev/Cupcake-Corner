@@ -13,6 +13,9 @@ struct CheckoutView: View {
     @State private var confirmationMessage = ""
     @State private var showingConfirmation = false
     
+    @State private var failedOrderMessage = ""
+    @State private var showAlertIfConnectionFails = false
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -41,6 +44,11 @@ struct CheckoutView: View {
         .navigationTitle("Check out")
         .navigationBarTitleDisplayMode(.inline)
         .scrollBounceBehavior(.basedOnSize)
+        .alert("Ooops... something went wrong!", isPresented: $showAlertIfConnectionFails) {
+            Button("OK") { }
+        } message: {
+            Text(failedOrderMessage)
+        }
         .alert("Thank you!", isPresented: $showingConfirmation) {
             Button("OK") { }
         } message: {
@@ -69,6 +77,8 @@ struct CheckoutView: View {
             
         } catch {
             print("Check out failed: \(error.localizedDescription)")
+            failedOrderMessage = "Looks like your order failed, please make sure you're connected to the Internet and try again."
+            showAlertIfConnectionFails = true
         }
     }
 }
